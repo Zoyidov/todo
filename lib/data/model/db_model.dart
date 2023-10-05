@@ -1,4 +1,6 @@
 
+import 'package:easy_localization/easy_localization.dart';
+
 class TodoModel {
   final int? id;
   final String name;
@@ -6,7 +8,7 @@ class TodoModel {
   final String location;
   final String time;
   final String priorityColor;
-  // final DateTime dateCreated;
+  final DateTime dateCreated;
 
   TodoModel({
     this.id,
@@ -14,8 +16,8 @@ class TodoModel {
     required this.description,
     required this.location,
     required this.time,
-    required this.priorityColor
-    // required this.dateCreated,
+    required this.priorityColor,
+    required this.dateCreated,
   });
 
   Map<String, dynamic> toJson() {
@@ -25,8 +27,8 @@ class TodoModel {
       'description': description,
       'location': location,
       'time': time,
-      'priorityColor': priorityColor
-      // 'dateCreated': DateFormat('yyyy-MM-dd').format(dateCreated)
+      'priorityColor': priorityColor,
+      'date_created': DateFormat('yyyy-MM-dd').format(dateCreated)
     };
   }
 
@@ -38,7 +40,7 @@ class TodoModel {
       location: json['location'] as String,
       time: json['time'] as String,
       priorityColor: json['priorityColor'] as String,
-      // dateCreated: DateTime.parse(json['dateCreated'] as String)
+      dateCreated: DateTime.parse(json['date_created'] as String)
     );
   }
 
@@ -48,8 +50,8 @@ class TodoModel {
     String? description,
     String? location,
     String? time,
-    String? priorityColor
-    // DateTime? dateCreated
+    String? priorityColor,
+    DateTime? dateCreated
   }) {
     return TodoModel(
       id: id ?? this.id,
@@ -57,8 +59,8 @@ class TodoModel {
       description: description ?? this.description,
       location: location ?? this.location,
       time: time ?? this.time,
-      priorityColor: priorityColor ?? this.priorityColor
-      // dateCreated: dateCreated ?? this.dateCreated
+      priorityColor: priorityColor ?? this.priorityColor,
+      dateCreated: dateCreated ?? this.dateCreated
     );
   }
 }
@@ -71,5 +73,5 @@ class EventModelFields{
   static const String time="time";
   static const String priorityColor="priorityColor";
   static const String eventTable = "event_table";
-  // static const String dateCreated = "date_created";
+  static const String dateCreated = "date_created";
 }

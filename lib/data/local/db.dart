@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -40,12 +42,12 @@ class LocalDatabase {
     ${EventModelFields.description} $textType,
     ${EventModelFields.location} $textType,
     ${EventModelFields.time} $textType,
-    ${EventModelFields.priorityColor} $textType
+    ${EventModelFields.priorityColor} $textType,
+    ${EventModelFields.dateCreated} DATETIME DEFAULT CURRENT_TIMESTAMP
     )
     ''');
   }
 
-  // ${EventModelFields.dateCreated} DATETIME DEFAULT CURRENT_TIMESTAMP
 
 
 
@@ -91,17 +93,17 @@ class LocalDatabase {
       EventModelFields.eventTable,
     );
   }
-  static Future<DateTime> getSavedDay() async {
-    final db = await getInstance.database;
-    final result = await db.rawQuery(
-        'SELECT date_created FROM ${EventModelFields.eventTable} ORDER BY date_created DESC LIMIT 1');
+  Future<List<DateTime>> getAllSavedDates() async {
+    final db = await database;
+    final List<Map<String, dynamic>> results = await db.query(
+      EventModelFields.eventTable,
+      columns: [EventModelFields.dateCreated],
+    );
 
-    if (result.isNotEmpty) {
-      final dateString = result[0]['date_created'];
-      return DateTime.parse(dateString.toString());
-    } else {
-      return DateTime.now();
-    }
+    final List<DateTime> savedDates = results
+        .map((map) => DateTime.parse(map[EventModelFields.dateCreated]))
+        .toList();
+
+    return savedDates;
   }
-
 }

@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:udevs/bloc/todo_bloc.dart';
-import 'package:udevs/ui/home_page/sjhd.dart';
+import 'package:udevs/ui/home_page/calendar_todo.dart';
 import 'package:udevs/ui/routes/app_routes.dart';
 import 'package:udevs/utils/colors.dart';
 import 'package:udevs/utils/icons.dart';
-import 'package:udevs/widgets/calendar_todo/calendar.dart';
 import 'package:udevs/widgets/event.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 import '../../data/model/db_model.dart';
@@ -30,12 +29,12 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        toolbarHeight: 40,
         actions: [
           Padding(
-              padding: const EdgeInsets.only(right: 20.0),
+              padding: const EdgeInsets.only(right: 20.0,),
               child: IconButton(
-                onPressed: () {
-                },
+                onPressed: () {},
                 icon: SvgPicture.asset(AppIcons.notification),
               )),
         ],
@@ -43,7 +42,7 @@ class _HomePageState extends State<HomePage> {
         scrolledUnderElevation: 0,
         title: Text(
           DateFormat('EEEE').format(selectedDate),
-          style: const TextStyle(color: Colors.black),
+          style: const TextStyle(color: Colors.black,fontWeight: FontWeight.w700),
         ),
       ),
       body: SingleChildScrollView(
@@ -51,17 +50,10 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.symmetric(horizontal: 22.0),
           child: Column(
             children: [
-              CalendarWidget(),
-              // CalendarTodo(
-              //   initialDate: selectedDate,
-              //   firstDate: DateTime(1950, 1, 1),
-              //   lastDate: DateTime(2050, 12, 31),
-              //   onDateChanged: (newDate) {
-              //     setState(() {
-              //       selectedDate = newDate;
-              //     });
-              //   },
-              // ),
+              SizedBox(
+                  height: 350,
+                  child: CalendarWidget(
+                  )),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -101,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                       itemBuilder: (context, index) {
                         final event = state.todos[index];
                         Color eventColor =
-                        Color(int.parse(event.priorityColor, radix: 16));
+                            Color(int.parse(event.priorityColor, radix: 16));
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 28.0),
                           child: ZoomTapAnimation(
@@ -123,10 +115,10 @@ class _HomePageState extends State<HomePage> {
                               tColor: event.priorityColor == "ff009fee"
                                   ? AppColors.c_056
                                   : event.priorityColor == "ffee2b00"
-                                  ? AppColors.red
-                                  : event.priorityColor == "ffee8f00"
-                                  ? AppColors.orange
-                                  : AppColors.black,
+                                      ? AppColors.red
+                                      : event.priorityColor == "ffee8f00"
+                                          ? AppColors.orange
+                                          : AppColors.black,
                             ),
                           ),
                         );
@@ -139,7 +131,8 @@ class _HomePageState extends State<HomePage> {
                       child: Text('Error: ${state.errorMessage}'),
                     );
                   }
-                  return Center(child: Text('Unknown state: ${state.toString()}'));
+                  return Center(
+                      child: Text('Unknown state: ${state.toString()}'));
                 },
               ),
               const SizedBox(height: 30.0),

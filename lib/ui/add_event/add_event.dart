@@ -187,7 +187,7 @@ class _AddEventState extends State<AddEvent> {
                       time: eventTimeController.text,
                       priorityColor:
                       _selectedColor?.value.toRadixString(16) ??
-                          "FFFFFF",
+                          "FFFFFF", dateCreated: DateTime.now(),
                       // dateCreated: DateTime.now(),
                     )));
                   }

@@ -96,7 +96,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                     description: updatedDescription,
                     location: updatedLocation,
                     time: updatedTime,
-                    priorityColor: updatedColor,
+                    priorityColor: updatedColor, dateCreated: DateTime.now(),
                   );
 
                   context.read<TodoBloc>().add(UpdateTodo(updatedTodo));

@@ -74,7 +74,7 @@ class _EventState extends State<Event> {
                 const SizedBox(height: 12,),
                 Row(
                   children: [
-                    if (widget.time.isNotEmpty) // Check if time is not empty
+                    if (widget.time.isNotEmpty)
                       Row(
                         children: [
                           // ignore: deprecated_member_use
