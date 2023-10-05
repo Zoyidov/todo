@@ -62,7 +62,9 @@ class _EventState extends State<Event> {
                   ),
                 ),
                 Text(
-                  widget.description,
+                  widget.description.length <= 30
+                      ? widget.description
+                      : '${widget.description.substring(0, 100)}...',
                   style: TextStyle(
                     fontSize: 8,
                     fontWeight: FontWeight.w400,
@@ -72,18 +74,23 @@ class _EventState extends State<Event> {
                 const SizedBox(height: 12,),
                 Row(
                   children: [
-                    // ignore: deprecated_member_use
-                    SvgPicture.asset(AppIcons.clock, color: widget.color),
-                    const SizedBox(width: 5,),
-                    Text(
-                      widget.time,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 10,
-                        color: widget.tColor,
+                    if (widget.time.isNotEmpty) // Check if time is not empty
+                      Row(
+                        children: [
+                          // ignore: deprecated_member_use
+                          SvgPicture.asset(AppIcons.clock, color: widget.color),
+                          const SizedBox(width: 5,),
+                          Text(
+                            widget.time,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 10,
+                              color: widget.tColor,
+                            ),
+                          ),
+                          const SizedBox(width: 15,),
+                        ],
                       ),
-                    ),
-                    const SizedBox(width: 15,),
                     if (widget.location.isNotEmpty)
                       Row(
                         children: [
@@ -91,7 +98,9 @@ class _EventState extends State<Event> {
                           SvgPicture.asset(AppIcons.location, color: widget.color),
                           const SizedBox(width: 5,),
                           Text(
-                            widget.location,
+                            widget.location.length <= 20
+                                ? widget.location
+                                : '${widget.location.substring(0, 20)}...',
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 10,

@@ -3,15 +3,28 @@ part of 'todo_bloc.dart';
 @immutable
 abstract class TodoEvent {}
 
-class AddEventState extends TodoEvent {
-  final EventModel eventModel;
+class AddTodo extends TodoEvent {
+  final TodoModel newTodo;
 
-  AddEventState({required this.eventModel});
+  AddTodo(this.newTodo);
+
+  List<Object> get props => [newTodo];
 }
 
-
-class DeleteEventState extends TodoEvent {
+class DeleteTodo extends TodoEvent {
   final int id;
 
-  DeleteEventState({required this.id});
+  DeleteTodo(this.id);
+
+  List<Object> get props => [id];
 }
+
+class UpdateTodo extends TodoEvent {
+  final TodoModel updatedTodo;
+
+  UpdateTodo(this.updatedTodo);
+
+  List<Object> get props => [updatedTodo];
+}
+
+class FetchTodos extends TodoEvent {}

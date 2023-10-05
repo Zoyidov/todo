@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class GlobalTextField extends StatefulWidget {
@@ -10,18 +9,18 @@ class GlobalTextField extends StatefulWidget {
   final String? suffixIcon;
   final String caption;
   final TextEditingController? controller;
-  final ValueChanged? onChanged;
   final int? max;
   final Color? color;
+  final ValueChanged? onChanged;
 
   const GlobalTextField({
     Key? key,
     required this.hintText,
     required this.keyboardType,
-    required this.textInputAction,
     this.prefixIcon,
     required this.caption,
-    this.controller, this.onChanged, this.max, this.suffixIcon, this.color,
+    this.controller,
+    this.max, required this.textInputAction, this.suffixIcon, this.color, this.onChanged,
   }) : super(key: key);
 
   @override
@@ -30,14 +29,13 @@ class GlobalTextField extends StatefulWidget {
 }
 
 class _GlobalTextFieldState extends State<GlobalTextField> {
-  bool _isPasswordVisible = false;
-  late MaskTextInputFormatter _phoneMaskFormatter;
+  late MaskTextInputFormatter _maskFormatter;
 
   @override
   void initState() {
     super.initState();
-    _phoneMaskFormatter = MaskTextInputFormatter(
-      mask: '+(998) ## ###-##-##',
+    _maskFormatter = MaskTextInputFormatter(
+      mask: '##:## - ##:##',
       filter: {"#": RegExp(r'[0-9]')},
     );
   }
@@ -62,44 +60,23 @@ class _GlobalTextFieldState extends State<GlobalTextField> {
           height: 5,
         ),
         TextField(
+          onChanged: widget.onChanged,
           controller: widget.controller,
           maxLines: widget.max,
-          onTapOutside: (event){
+          onTapOutside: (event) {
             FocusManager.instance.primaryFocus?.unfocus();
           },
           cursorColor: Colors.grey,
           cursorHeight: 25,
+          inputFormatters: widget.keyboardType == TextInputType.number
+              ? [_maskFormatter]
+              : [],
           decoration: InputDecoration(
             hintText: widget.hintText,
             prefixIcon: widget.prefixIcon != null
                 ? Icon(
               widget.prefixIcon,
               color: Colors.grey,
-            )
-                : null,
-            suffixIcon: widget.keyboardType == TextInputType.visiblePassword
-                ? IconButton(
-              splashRadius: 1,
-              icon: Icon(
-                _isPasswordVisible
-                    ? Icons.visibility
-                    : Icons.visibility_off,
-                color: Colors.grey,
-              ),
-              onPressed: () {
-                setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
-                });
-              },
-            )
-                : widget.suffixIcon != null?
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: SvgPicture.asset(
-                widget.suffixIcon!,
-                // ignore: deprecated_member_use
-                color: widget.color,
-              ),
             )
                 : null,
             enabledBorder: OutlineInputBorder(
@@ -122,16 +99,9 @@ class _GlobalTextFieldState extends State<GlobalTextField> {
             fillColor: Colors.black12,
           ),
           keyboardType: widget.keyboardType,
-          textInputAction: widget.textInputAction,
-          inputFormatters: widget.keyboardType == TextInputType.phone
-              ? [_phoneMaskFormatter]
-              : null,
-          obscureText: widget.keyboardType == TextInputType.visiblePassword
-              ? !_isPasswordVisible
-              : false,
+          textInputAction: TextInputAction.next,
         ),
       ],
     );
   }
 }
-

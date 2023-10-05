@@ -16,7 +16,7 @@ class AddEvent extends StatefulWidget {
 
 class _AddEventState extends State<AddEvent> {
   final LocalDatabase databaseHelper = LocalDatabase.getInstance;
-  Color? _selectedColor = AppColors.red;
+  Color? _selectedColor = AppColors.blue;
 
   final TextEditingController eventNameController = TextEditingController();
   final TextEditingController eventDescriptionController =
@@ -24,7 +24,9 @@ class _AddEventState extends State<AddEvent> {
   final TextEditingController eventLocationController = TextEditingController();
   final TextEditingController eventTimeController = TextEditingController();
 
-  bool _isSaving = false;
+  final bool _isSaving = false;
+  bool _eventNameValid = false;
+  bool _eventTimeValid = false;
 
   @override
   void initState() {
@@ -68,31 +70,6 @@ class _AddEventState extends State<AddEvent> {
     );
   }
 
-  Future<void> _saveEventToDatabase() async {
-    setState(() {
-      _isSaving = true;
-    });
-
-    final event = EventModel(
-      name: eventNameController.text,
-      description: eventDescriptionController.text,
-      location: eventLocationController.text,
-      time: eventTimeController.text,
-      priorityColor: _selectedColor?.value.toRadixString(16) ?? "FFFFFF",
-    );
-
-    try {
-      await LocalDatabase.insert(event);
-      setState(() {
-        _isSaving = false;
-      });
-    } catch (error) {
-      setState(() {
-        _isSaving = false;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,13 +88,18 @@ class _AddEventState extends State<AddEvent> {
                 keyboardType: TextInputType.text,
                 textInputAction: TextInputAction.next,
                 caption: 'Event name',
+                onChanged: (text) {
+                  setState(() {
+                    _eventNameValid = text.isNotEmpty;
+                  });
+                },
               ),
               const SizedBox(
                 height: 16,
               ),
               GlobalTextField(
                 controller: eventDescriptionController,
-                max: 10,
+                max: 5,
                 hintText: '',
                 keyboardType: TextInputType.text,
                 textInputAction: TextInputAction.next,
@@ -166,9 +148,14 @@ class _AddEventState extends State<AddEvent> {
               GlobalTextField(
                 controller: eventTimeController,
                 hintText: '',
-                keyboardType: TextInputType.text,
-                textInputAction: TextInputAction.next,
+                keyboardType: TextInputType.number,
+                textInputAction: TextInputAction.done,
                 caption: 'Event time',
+                onChanged: (text) {
+                  setState(() {
+                    _eventTimeValid = text.isNotEmpty;
+                  });
+                },
               ),
               const SizedBox(
                 height: 16,
@@ -183,9 +170,25 @@ class _AddEventState extends State<AddEvent> {
                         content: Text("Please select a color."),
                       ),
                     );
+                  } else if (!_eventNameValid || !_eventTimeValid) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        duration: Duration(milliseconds: 500),
+                        backgroundColor: AppColors.red,
+                        content: Text("Event name and time are required."),
+                      ),
+                    );
                   } else {
                     Navigator.of(context).pop();
-                    context.read<TodoBloc>().add(AddEventState(eventModel: EventModel(name: eventNameController.text, description: eventDescriptionController.text, location: eventLocationController.text, time: eventTimeController.text, priorityColor: _selectedColor?.value.toRadixString(16) ?? "FFFFFF",
+                    context.read<TodoBloc>().add(AddTodo(TodoModel(
+                      name: eventNameController.text,
+                      description: eventDescriptionController.text,
+                      location: eventLocationController.text,
+                      time: eventTimeController.text,
+                      priorityColor:
+                      _selectedColor?.value.toRadixString(16) ??
+                          "FFFFFF",
+                      // dateCreated: DateTime.now(),
                     )));
                   }
                 },
@@ -196,8 +199,8 @@ class _AddEventState extends State<AddEvent> {
                   ),
                 ),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 25, vertical: 10),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
                   height: 40,
                   alignment: Alignment.center,
                   child: const Text(

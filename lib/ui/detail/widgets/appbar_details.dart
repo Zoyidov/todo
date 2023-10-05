@@ -12,12 +12,16 @@ Widget buildInfoRow(String iconPath, String text) {
         color: AppColors.white,
       ),
       const SizedBox(width: 5,),
-      Text(
-        text,
-        style: const TextStyle(
-          fontWeight: FontWeight.w500,
-          fontSize: 10,
-          color: AppColors.white,
+      Expanded(
+        child: Text(
+          text,
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 10,
+            color: AppColors.white,
+          ),
         ),
       ),
     ],

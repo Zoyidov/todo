@@ -3,36 +3,35 @@ import 'package:sqflite/sqflite.dart';
 
 import '../model/db_model.dart';
 
-class LocalDatabase{
-  static final LocalDatabase getInstance = LocalDatabase._init();
+class LocalDatabase {
+  static final LocalDatabase getInstance = LocalDatabase._();
 
-  LocalDatabase._init();
+  LocalDatabase._();
 
-  factory LocalDatabase(){
+  factory LocalDatabase() {
     return getInstance;
   }
 
   static Database? _database;
 
-  Future<Database> get database async{
-    if(_database !=null){
+  Future<Database> get database async {
+    if (_database != null) {
       return _database!;
-    }else{
+    } else {
       _database = await _initDB("defaultDatabase.db");
       return _database!;
     }
   }
 
-  Future<Database> _initDB(String dbName)async{
+  Future<Database> _initDB(String dbName) async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath,dbName);
-    return await openDatabase(path,version: 1,onCreate: _createDB);
+    final path = join(dbPath, dbName);
+    return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
-  Future _createDB(Database db, int version)async{
+  Future _createDB(Database db, int version) async {
     const idType = "INTEGER PRIMARY KEY AUTOINCREMENT";
     const textType = "TEXT NOT NULL";
-
 
     await db.execute('''
     CREATE TABLE ${EventModelFields.eventTable}(
@@ -46,26 +45,28 @@ class LocalDatabase{
     ''');
   }
 
-  static Future<EventModel> insert(
-      EventModel eventModel) async {
+  // ${EventModelFields.dateCreated} DATETIME DEFAULT CURRENT_TIMESTAMP
+
+
+
+  static Future<TodoModel> insert(TodoModel eventModel) async {
     final db = await getInstance.database;
-    final int id = await db.insert(
-        EventModelFields.eventTable, eventModel.toJson());
+    final int id = await db.insert(EventModelFields.eventTable, eventModel.toJson());
     return eventModel.copyWith(id: id);
   }
 
-  static Future<List<EventModel>> getAll() async {
-    List<EventModel> allInfo = [];
+
+  static Future<List<TodoModel>> getAll() async {
+    List<TodoModel> allInfo = [];
     final db = await getInstance.database;
     allInfo = (await db.query(EventModelFields.eventTable))
-        .map((e) => EventModel.fromJson(e))
+        .map((e) => TodoModel.fromJson(e))
         .toList();
 
     return allInfo;
   }
 
-
-  static update({required EventModel eventModel}) async {
+  static update({required TodoModel eventModel}) async {
     final db = await getInstance.database;
     db.update(
       EventModelFields.eventTable,
@@ -90,4 +91,17 @@ class LocalDatabase{
       EventModelFields.eventTable,
     );
   }
+  static Future<DateTime> getSavedDay() async {
+    final db = await getInstance.database;
+    final result = await db.rawQuery(
+        'SELECT date_created FROM ${EventModelFields.eventTable} ORDER BY date_created DESC LIMIT 1');
+
+    if (result.isNotEmpty) {
+      final dateString = result[0]['date_created'];
+      return DateTime.parse(dateString.toString());
+    } else {
+      return DateTime.now();
+    }
+  }
+
 }

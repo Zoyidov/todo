@@ -3,20 +3,16 @@ part of 'todo_bloc.dart';
 @immutable
 abstract class TodoState {}
 
-class NavigationInitial extends TodoState {}
+class TodoLoading extends TodoState {}
 
-class NavigationAddState extends TodoState{}
+class TodoLoaded extends TodoState {
+  final List<TodoModel> todos;
 
-class NavigationDeleteState extends TodoState{}
-
-class NavigationUpdateState extends TodoState{}
-
-class NavigationSuccessState extends TodoState{}
-
-class NavigationErrorState extends TodoState{
-  final String text;
-
-  NavigationErrorState({required this.text});
+  TodoLoaded(this.todos);
 }
 
-class NavigationLoadingState extends TodoState{}
+class TodoError extends TodoState {
+  final String errorMessage;
+
+  TodoError(this.errorMessage);
+}

@@ -4,9 +4,8 @@ import '../../../utils/colors.dart';
 import '../../../utils/icons.dart';
 
 Widget buildDeleteButton(VoidCallback onTap) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-    margin: const EdgeInsets.only(bottom: 60.0),
+  return Padding(
+    padding: const EdgeInsets.only(left: 16.0,right: 16.0,bottom: 50),
     child: ElevatedButton(
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
