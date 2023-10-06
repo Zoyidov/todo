@@ -16,3 +16,4 @@ class TodoError extends TodoState {
 
   TodoError(this.errorMessage);
 }
+

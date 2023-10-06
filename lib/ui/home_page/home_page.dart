@@ -24,6 +24,12 @@ class _HomePageState extends State<HomePage> {
   late List<TodoModel> events = [];
   DateTime selectedDate = DateTime.now();
 
+  void _onDateSelected(DateTime date) {
+    setState(() {
+      selectedDate = date;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,96 +38,111 @@ class _HomePageState extends State<HomePage> {
         toolbarHeight: 40,
         actions: [
           Padding(
-              padding: const EdgeInsets.only(right: 20.0,),
-              child: IconButton(
-                onPressed: () {},
-                icon: SvgPicture.asset(AppIcons.notification),
-              )),
+            padding: const EdgeInsets.only(right: 20.0),
+            child: IconButton(
+              onPressed: () {},
+              icon: SvgPicture.asset(AppIcons.notification),
+            ),
+          ),
         ],
         backgroundColor: Colors.white,
         scrolledUnderElevation: 0,
         title: Text(
           DateFormat('EEEE').format(selectedDate),
-          style: const TextStyle(color: Colors.black,fontWeight: FontWeight.w700),
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 22.0),
-          child: Column(
-            children: [
-              SizedBox(
-                  height: 350,
-                  child: CalendarWidget(
-                  )),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Schedule",
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                  ),
-                  ZoomTapAnimation(
-                    onTap: () {
-                      Navigator.pushNamed(context, RouteNames.addEvent);
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 28.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: AppColors.blue,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 22.0),
+        child: Column(
+          children: [
+            Expanded(
+              flex: 10,
+              child: CalendarWidget(
+                onDateSelected: _onDateSelected,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Schedule",
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+                ZoomTapAnimation(
+                  onTap: () {
+                    Navigator.pushNamed(context, RouteNames.addEvent);
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 14.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: AppColors.blue,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 22.0,
+                        vertical: 10.0,
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 22.0, vertical: 10.0),
-                        child: SvgPicture.asset(
-                          AppIcons.add,
-                          height: 12,
-                        ),
+                      child: SvgPicture.asset(
+                        AppIcons.add,
+                        height: 12,
                       ),
                     ),
-                  )
-                ],
-              ),
-              BlocBuilder<TodoBloc, TodoState>(
+                  ),
+                )
+              ],
+            ),
+            Expanded(
+              flex: 9,
+              child: BlocBuilder<TodoBloc, TodoState>(
                 builder: (context, state) {
                   if (state is TodoLoaded) {
-                    return ListView.builder(
+                    final filteredEvents = state.todos.where((event) {
+                      final eventDate = event.dateCreated;
+                      return eventDate.year == selectedDate.year &&
+                          eventDate.month == selectedDate.month &&
+                          eventDate.day == selectedDate.day;
+                    }).toList();
+                    return ListView.separated(
+                      physics: const BouncingScrollPhysics(),
                       shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: state.todos.length,
+                      itemCount: filteredEvents.length,
                       itemBuilder: (context, index) {
-                        final event = state.todos[index];
+                        final event = filteredEvents[index];
                         Color eventColor =
-                            Color(int.parse(event.priorityColor, radix: 16));
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 28.0),
-                          child: ZoomTapAnimation(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      EventDetailScreen(todo: event),
-                                ),
-                              );
-                            },
-                            child: Event(
-                              color: eventColor,
-                              name: event.name,
-                              description: event.description,
-                              location: event.location,
-                              time: event.time,
-                              tColor: event.priorityColor == "ff009fee"
-                                  ? AppColors.c_056
-                                  : event.priorityColor == "ffee2b00"
-                                      ? AppColors.red
-                                      : event.priorityColor == "ffee8f00"
-                                          ? AppColors.orange
-                                          : AppColors.black,
-                            ),
+                        Color(int.parse(event.priorityColor, radix: 16));
+                        return ZoomTapAnimation(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    EventDetailScreen(todo: event),
+                              ),
+                            );
+                          },
+                          child: Event(
+                            color: eventColor,
+                            name: event.name,
+                            description: event.description,
+                            location: event.location,
+                            time: event.time,
+                            tColor: event.priorityColor == "ff009fee"
+                                ? AppColors.c_056
+                                : event.priorityColor == "ffee2b00"
+                                ? AppColors.red
+                                : event.priorityColor == "ffee8f00"
+                                ? AppColors.orange
+                                : AppColors.black,
                           ),
                         );
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const SizedBox(height: 14);
                       },
                     );
                   } else if (state is TodoLoading) {
@@ -132,12 +153,12 @@ class _HomePageState extends State<HomePage> {
                     );
                   }
                   return Center(
-                      child: Text('Unknown state: ${state.toString()}'));
+                    child: Text('Unknown state: ${state.toString()}'),
+                  );
                 },
               ),
-              const SizedBox(height: 30.0),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

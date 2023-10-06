@@ -77,6 +77,7 @@ class _AddEventState extends State<AddEvent> {
         scrolledUnderElevation: 0,
       ),
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

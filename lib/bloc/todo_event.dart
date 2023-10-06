@@ -3,6 +3,17 @@ part of 'todo_bloc.dart';
 @immutable
 abstract class TodoEvent {}
 
+class TodoAdd extends TodoEvent {
+  final TodoModel eventModel;
+
+  TodoAdd({required this.eventModel});
+}
+
+class TodoDelete extends TodoEvent {
+  final int id;
+
+  TodoDelete({required this.id});
+}
 class AddTodo extends TodoEvent {
   final TodoModel newTodo;
 
@@ -28,3 +39,4 @@ class UpdateTodo extends TodoEvent {
 }
 
 class FetchTodos extends TodoEvent {}
+

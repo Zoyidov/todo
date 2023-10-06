@@ -76,6 +76,7 @@ class EventDetailScreen extends StatelessWidget {
           buildAppBarContent(todo, eventColor),
           Expanded(
             child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               child: buildEventDetails(todo),
             ),
           ),
