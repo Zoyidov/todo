@@ -55,17 +55,17 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 22.0),
-        child: Column(
-          children: [
-            Expanded(
-              flex: 10,
-              child: CalendarWidget(
-                onDateSelected: _onDateSelected,
-              ),
+      body: Column(
+        children: [
+          Expanded(
+            flex: 11,
+            child: CalendarWidget(
+              onDateSelected: _onDateSelected,
             ),
-            Row(
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
@@ -96,70 +96,70 @@ class _HomePageState extends State<HomePage> {
                 )
               ],
             ),
-            Expanded(
-              flex: 9,
-              child: BlocBuilder<TodoBloc, TodoState>(
-                builder: (context, state) {
-                  if (state is TodoLoaded) {
-                    final filteredEvents = state.todos.where((event) {
-                      final eventDate = event.dateCreated;
-                      return eventDate.year == selectedDate.year &&
-                          eventDate.month == selectedDate.month &&
-                          eventDate.day == selectedDate.day;
-                    }).toList();
-                    return ListView.separated(
-                      physics: const BouncingScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: filteredEvents.length,
-                      itemBuilder: (context, index) {
-                        final event = filteredEvents[index];
-                        Color eventColor =
-                        Color(int.parse(event.priorityColor, radix: 16));
-                        return ZoomTapAnimation(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    EventDetailScreen(todo: event),
-                              ),
-                            );
-                          },
-                          child: Event(
-                            color: eventColor,
-                            name: event.name,
-                            description: event.description,
-                            location: event.location,
-                            time: event.time,
-                            tColor: event.priorityColor == "ff009fee"
-                                ? AppColors.c_056
-                                : event.priorityColor == "ffee2b00"
-                                ? AppColors.red
-                                : event.priorityColor == "ffee8f00"
-                                ? AppColors.orange
-                                : AppColors.black,
-                          ),
-                        );
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const SizedBox(height: 14);
-                      },
-                    );
-                  } else if (state is TodoLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is TodoError) {
-                    return Center(
-                      child: Text('Error: ${state.errorMessage}'),
-                    );
-                  }
-                  return Center(
-                    child: Text('Unknown state: ${state.toString()}'),
+          ),
+          Expanded(
+            flex: 9,
+            child: BlocBuilder<TodoBloc, TodoState>(
+              builder: (context, state) {
+                if (state is TodoLoaded) {
+                  final filteredEvents = state.todos.where((event) {
+                    final eventDate = event.dateCreated;
+                    return eventDate.year == selectedDate.year &&
+                        eventDate.month == selectedDate.month &&
+                        eventDate.day == selectedDate.day;
+                  }).toList();
+                  return ListView.separated(
+                    physics: const BouncingScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: filteredEvents.length,
+                    itemBuilder: (context, index) {
+                      final event = filteredEvents[index];
+                      Color eventColor =
+                      Color(int.parse(event.priorityColor, radix: 16));
+                      return ZoomTapAnimation(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  EventDetailScreen(todo: event),
+                            ),
+                          );
+                        },
+                        child: Event(
+                          color: eventColor,
+                          name: event.name,
+                          description: event.description,
+                          location: event.location,
+                          time: event.time,
+                          tColor: event.priorityColor == "ff009fee"
+                              ? AppColors.c_056
+                              : event.priorityColor == "ffee2b00"
+                              ? AppColors.red
+                              : event.priorityColor == "ffee8f00"
+                              ? AppColors.orange
+                              : AppColors.black,
+                        ),
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return const SizedBox(height: 14);
+                    },
                   );
-                },
-              ),
+                } else if (state is TodoLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is TodoError) {
+                  return Center(
+                    child: Text('Error: ${state.errorMessage}'),
+                  );
+                }
+                return Center(
+                  child: Text('Unknown state: ${state.toString()}'),
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

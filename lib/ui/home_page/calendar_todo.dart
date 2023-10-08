@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:udevs/ui/home_page/widget/calendar_button.dart';
 import '../../data/local/db.dart';
 import '../../utils/colors.dart';
 
@@ -133,128 +134,147 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         itemBuilder: (context, monthIndex) {
           int month = monthIndex + 1;
           int daysInMonth = DateTime(selectedYear, month + 1, 0).day;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20,),
-              Text(
-                monthNames[monthIndex],
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color:  AppColors.black
-                ),
-              ),
-              Row(
-                children: [
-                  for (var dayName in daysNames)
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          dayName,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
-                            color: dayName == 'Sat' || dayName == 'Sun'
-                                ? AppColors.red
-                                : AppColors.black,
-                          ),
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Text(
+                        monthNames[monthIndex],
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color:  AppColors.black
                         ),
                       ),
                     ),
-                ],
-              ),
-              GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7,
+                    CalendarButton(
+                      nextAction: () {
+                        _pageController.nextPage(duration: Duration(milliseconds: 300), curve: Curves.ease);
+                      },
+                      beforeAction: () {
+                        _pageController.previousPage(duration: Duration(milliseconds: 300), curve: Curves.ease);
+                      },
+                    ),
+                  ],
                 ),
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: daysInMonth,
-                itemBuilder: (context, dayIndex) {
-                  int day = dayIndex + 1;
-                  Color textColor = AppColors.black;
-                  bool isToday = DateTime.now().year == selectedYear &&
-                      DateTime.now().month == month &&
-                      DateTime.now().day == day;
-
-                  if (daysNames[(dayIndex + 6) % 7] == 'Sat' ||
-                      daysNames[(dayIndex + 1) % 7] == 'Sun') {
-                    textColor = AppColors.red;
-                  }
-                  if (isToday) {
-                    textColor = Colors.deepPurpleAccent;
-                  }
-                  bool isSaved = isDateSaved(month, day);
-                  int savedDataCount = getSavedDataCount(DateTime(selectedYear, month, day));
-                  List<Color> dotColors = [];
-                  if (isSaved) {
-                    for (int i = 0; i < savedDataCount; i++) {
-                      dotColors.add(
-                        _getDotColorBasedOnData(i),
-                      );
-                    }
-                  }
-
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedDay = day;
-                        selectedDay = day;
-                        selectedDate = DateTime(selectedYear, month, day);
-                      });
-                      widget.onDateSelected(selectedDate);
-                    },
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(4),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: selectedDay == day
-                                ? Colors.blue
-                                : Colors.transparent,
-                            border: Border.all(
-                              color: selectedDay == day
-                                  ? Colors.blue
-                                  : Colors.transparent,
-                              width: 2,
-                            ),
-                          ),
-                          child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: isToday? AppColors.black: Colors.transparent,
-                                width: 2,
-                              ),
-                            ),
-                            child: Text(
-                              '$day',
-                              style: TextStyle(
-                                color: textColor,
-                              ),
+                const SizedBox(height: 10,),
+                Row(
+                  children: [
+                    for (var dayName in daysNames)
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            dayName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 10,
+                              color: dayName == 'Sat' || dayName == 'Sun'
+                                  ? AppColors.red
+                                  : AppColors.black,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 3),
-                        if (isSaved)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: dotColors
-                                .map((color) => DotWidget(color))
-                                .toList(),
-                          ),
-                      ],
-                    ),
-                  );
-                },
-              )
+                      ),
+                  ],
+                ),
+                GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 7,
+                  ),
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: daysInMonth,
+                  itemBuilder: (context,dayIndex) {
+                    int day = dayIndex + 1;
+                    Color textColor = AppColors.black;
+                    bool isToday = DateTime.now().year == selectedYear &&
+                        DateTime.now().month == month &&
+                        DateTime.now().day == day;
 
-            ],
+                    if (daysNames[(dayIndex + 6) % 7] == 'Sat' ||
+                        daysNames[(dayIndex + 1) % 7] == 'Sun') {
+                      textColor = AppColors.red;
+                    }
+                    if (isToday) {
+                      textColor = Colors.deepPurpleAccent;
+                    }
+                    bool isSaved = isDateSaved(month, day);
+                    int savedDataCount = getSavedDataCount(DateTime(selectedYear, month, day));
+                    List<Color> dotColors = [];
+                    if (isSaved) {
+                      for (int i = 0; i < savedDataCount; i++) {
+                        dotColors.add(
+                          _getDotColorBasedOnData(i),
+                        );
+                      }
+                    }
+
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedDay = day;
+                          selectedDay = day;
+                          selectedDate = DateTime(selectedYear, month, day);
+                        });
+                        widget.onDateSelected(selectedDate);
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(4),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: selectedDay == day
+                                  ? Colors.blue
+                                  : Colors.transparent,
+                              border: Border.all(
+                                color: selectedDay == day
+                                    ? Colors.blue
+                                    : Colors.transparent,
+                                width: 2,
+                              ),
+                            ),
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: isToday? AppColors.black: Colors.transparent,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Text(
+                                '$day',
+                                style: TextStyle(
+                                  color: textColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          if (isSaved)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: dotColors
+                                  .map((color) => DotWidget(color))
+                                  .toList(),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           );
         },
       ),

@@ -43,7 +43,7 @@ class _AddEventState extends State<AddEvent> {
             _buildColorOption('Blue color', AppColors.blue),
             _buildColorOption('Red color', AppColors.red),
             _buildColorOption('Orange color', AppColors.orange),
-            _buildColorOption('', AppColors.white),
+            _buildColorOption('', Colors.transparent),
           ],
         );
       },
