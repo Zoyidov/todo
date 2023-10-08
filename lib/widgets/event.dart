@@ -83,6 +83,7 @@ class _EventState extends State<Event> {
                           children: [
                             // ignore: deprecated_member_use
                             SvgPicture.asset(AppIcons.clock,
+                                // ignore: deprecated_member_use
                                 color: widget.color),
                             const SizedBox(
                               width: 5,
@@ -105,6 +106,7 @@ class _EventState extends State<Event> {
                           children: [
                             // ignore: deprecated_member_use
                             SvgPicture.asset(AppIcons.location,
+                                // ignore: deprecated_member_use
                                 color: widget.color),
                             const SizedBox(
                               width: 5,

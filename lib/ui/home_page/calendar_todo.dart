@@ -157,10 +157,10 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                     ),
                     CalendarButton(
                       nextAction: () {
-                        _pageController.nextPage(duration: Duration(milliseconds: 300), curve: Curves.ease);
+                        _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.ease);
                       },
                       beforeAction: () {
-                        _pageController.previousPage(duration: Duration(milliseconds: 300), curve: Curves.ease);
+                        _pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.ease);
                       },
                     ),
                   ],
