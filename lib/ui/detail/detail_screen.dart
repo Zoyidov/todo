@@ -33,10 +33,10 @@ class EventDetailScreen extends StatelessWidget {
           child: Container(
             margin: const EdgeInsets.only(left: 16),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(50),
               color: AppColors.white,
             ),
-            child: const Icon(Icons.arrow_back_ios),
+            child: const Center(child: Icon(Icons.arrow_back_ios)),
           ),
         ),
         actions: [

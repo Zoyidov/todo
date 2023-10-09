@@ -28,7 +28,7 @@ class TodoModel {
       'location': location,
       'time': time,
       'priorityColor': priorityColor,
-      'date_created': DateFormat('yyyy-MM-dd').format(dateCreated)
+      'date_created': DateFormat('yyyy-MM-dd HH:mm:ss').format(dateCreated)
     };
   }
 
